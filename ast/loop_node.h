@@ -5,7 +5,7 @@
 namespace til {
 
 /**
- * Class for describing loop-cycle nodes.
+ * Class for describing loop nodes.
  */
 class loop_node : public cdk::basic_node {
   cdk::expression_node *_condition;

@@ -251,3 +251,52 @@ void til::type_checker::do_stop_node(til::stop_node *const node, int lvl) {
 void til::type_checker::do_return_node(til::return_node *const node, int lvl) {
   // TODO
 }
+
+void til::type_checker::do_variable_declaration_node(
+    til::variable_declaration_node *const node, int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_dereference_node(til::dereference_node *const node,
+                                            int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_function_call_node(
+    til::function_call_node *const node, int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_function_node(til::function_node *const node,
+                                         int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_index_node(til::index_node *const node, int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_memory_alloc_node(til::memory_alloc_node *const node,
+                                             int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_qualifier_node(til::qualifier_node *const node,
+                                          int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_recursion_node(til::recursion_node *const node,
+                                          int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_identity_node(til::identity_node *const node,
+                                         int lvl) {
+  // TODO
+}
+
+void til::type_checker::do_println_node(til::println_node *const node,
+                                        int lvl) {
+  // TODO
+}

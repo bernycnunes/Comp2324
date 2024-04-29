@@ -12,7 +12,6 @@ public:
   inline return_node(int lineno, cdk::expression_node *value)
       : cdk::basic_node(lineno), _value(value) {}
 
-public:
   inline cdk::expression_node *value() { return _value; }
 
   void accept(basic_ast_visitor *sp, int level) {

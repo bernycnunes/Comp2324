@@ -202,7 +202,7 @@ void til::type_checker::do_read_node(til::read_node *const node, int lvl) {
 
 //---------------------------------------------------------------------------
 
-void til::type_checker::do_while_node(til::while_node *const node, int lvl) {
+void til::type_checker::do_loop_node(til::loop_node *const node, int lvl) {
   node->condition()->accept(this, lvl + 4);
 }
 
@@ -228,10 +228,6 @@ void til::type_checker::do_block_node(til::block_node *const node, int lvl) {
   // TODO
 }
 
-void til::type_checker::do_loop_node(til::loop_node *const node, int lvl) {
-  // TODO
-}
-
 void til::type_checker::do_next_node(til::next_node *const node, int lvl) {
   // TODO
 }
@@ -252,12 +248,7 @@ void til::type_checker::do_return_node(til::return_node *const node, int lvl) {
   // TODO
 }
 
-void til::type_checker::do_variable_declaration_node(
-    til::variable_declaration_node *const node, int lvl) {
-  // TODO
-}
-
-void til::type_checker::do_dereference_node(til::dereference_node *const node,
+void til::type_checker::do_declaration_node(til::declaration_node *const node,
                                             int lvl) {
   // TODO
 }
@@ -267,8 +258,8 @@ void til::type_checker::do_function_call_node(
   // TODO
 }
 
-void til::type_checker::do_function_node(til::function_node *const node,
-                                         int lvl) {
+void til::type_checker::do_function_definition_node(
+    til::function_definition_node *const node, int lvl) {
   // TODO
 }
 
@@ -276,27 +267,7 @@ void til::type_checker::do_index_node(til::index_node *const node, int lvl) {
   // TODO
 }
 
-void til::type_checker::do_memory_alloc_node(til::memory_alloc_node *const node,
-                                             int lvl) {
-  // TODO
-}
-
-void til::type_checker::do_qualifier_node(til::qualifier_node *const node,
-                                          int lvl) {
-  // TODO
-}
-
-void til::type_checker::do_recursion_node(til::recursion_node *const node,
-                                          int lvl) {
-  // TODO
-}
-
-void til::type_checker::do_identity_node(til::identity_node *const node,
-                                         int lvl) {
-  // TODO
-}
-
-void til::type_checker::do_println_node(til::println_node *const node,
-                                        int lvl) {
+void til::type_checker::do_stack_alloc_node(til::stack_alloc_node *const node,
+                                            int lvl) {
   // TODO
 }

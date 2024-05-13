@@ -14,11 +14,9 @@ public:
   next_node(int lineno, int level = 1)
       : cdk::basic_node(lineno), _level(level) {}
 
-  int level() const { return _level; }
-
+  int level() { return _level; }
   void accept(basic_ast_visitor *sp, int level) {
     sp->do_next_node(this, level);
   }
 };
-
 } // namespace til

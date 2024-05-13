@@ -9,10 +9,10 @@ namespace til {
  */
 
 class null_node : public cdk::expression_node {
+public:
+  inline null_node(int lineno) : cdk::expression_node(lineno) {}
 
 public:
-  null_node(int lineno) : cdk::expression_node(lineno) {}
-
   void accept(basic_ast_visitor *sp, int level) {
     sp->do_null_node(this, level);
   }

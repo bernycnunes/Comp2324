@@ -18,6 +18,7 @@ Y_NAME=$(LANGUAGE)_parser
 
 LFLAGS   = 
 YFLAGS   = -dtv
+# YFLAGS  += -Wcounterexamples
 CXXFLAGS = -std=c++20 -DYYDEBUG=1 -Wall -Werror -g -Og -I. -I$(CDK_INC_DIR)
 LDFLAGS  = -L$(CDK_LIB_DIR) -lcdk
 COMPILER = $(LANGUAGE)

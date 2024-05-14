@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cdk/ast/basic_node.h>
 #include <cdk/ast/sequence_node.h>
 
 namespace til {
@@ -8,7 +9,8 @@ namespace til {
  * Class for describing block nodes.
  */
 class block_node : public cdk::basic_node {
-  cdk::sequence_node *_declarations, *_instructions;
+  cdk::sequence_node *_declarations;
+  cdk::sequence_node *_instructions;
 
 public:
   block_node(int lineno, cdk::sequence_node *declarations,
@@ -17,7 +19,6 @@ public:
         _instructions(instructions) {}
 
   cdk::sequence_node *declarations() { return _declarations; }
-
   cdk::sequence_node *instructions() { return _instructions; }
 
   void accept(basic_ast_visitor *sp, int level) {

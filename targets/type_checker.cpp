@@ -187,7 +187,7 @@ void til::type_checker::do_evaluation_node(til::evaluation_node *const node,
 }
 
 void til::type_checker::do_print_node(til::print_node *const node, int lvl) {
-  node->argument()->accept(this, lvl + 2);
+  node->arguments()->accept(this, lvl + 2);
 }
 
 //---------------------------------------------------------------------------
@@ -248,8 +248,8 @@ void til::type_checker::do_return_node(til::return_node *const node, int lvl) {
   // TODO
 }
 
-void til::type_checker::do_declaration_node(til::declaration_node *const node,
-                                            int lvl) {
+void til::type_checker::do_variable_declaration_node(
+    til::variable_declaration_node *const node, int lvl) {
   // TODO
 }
 

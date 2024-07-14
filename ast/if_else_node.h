@@ -18,7 +18,9 @@ public:
         _elseblock(elseblock) {}
 
   cdk::expression_node *condition() { return _condition; }
+
   cdk::basic_node *thenblock() { return _thenblock; }
+
   cdk::basic_node *elseblock() { return _elseblock; }
 
   void accept(basic_ast_visitor *sp, int level) {

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "cdk/types/basic_type.h"
 #include "targets/basic_ast_visitor.h"
+#include <memory>
 
 namespace til {
 
@@ -9,6 +11,7 @@ namespace til {
  */
 class type_checker : public basic_ast_visitor {
   cdk::symbol_table<til::symbol> &_symtab;
+  std::shared_ptr<cdk::basic_type> _curr_rtype;
 
   basic_ast_visitor *_parent;
 
@@ -16,7 +19,8 @@ public:
   type_checker(std::shared_ptr<cdk::compiler> compiler,
                cdk::symbol_table<til::symbol> &symtab,
                basic_ast_visitor *parent)
-      : basic_ast_visitor(compiler), _symtab(symtab), _parent(parent) {}
+      : basic_ast_visitor(compiler), _symtab(symtab), _curr_rtype(nullptr),
+        _parent(parent) {}
 
 public:
   ~type_checker() { os().flush(); }

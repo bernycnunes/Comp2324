@@ -1,6 +1,9 @@
 #include "targets/postfix_writer.h"
 #include ".auto/all_nodes.h" // all_nodes.h is automatically generated
+#include "cdk/ast/expression_node.h"
+#include "targets/basic_ast_visitor.h"
 #include "targets/type_checker.h"
+#include <memory>
 
 //---------------------------------------------------------------------------
 
@@ -190,7 +193,7 @@ void til::postfix_writer::do_program_node(til::program_node *const node,
   _pf.LABEL("_main");
   _pf.ENTER(0); // til doesn't implement local variables
 
-  node->statements()->accept(this, lvl);
+  node->block()->accept(this, lvl);
 
   // end the main function
   _pf.INT(0);
@@ -223,33 +226,42 @@ void til::postfix_writer::do_evaluation_node(til::evaluation_node *const node,
 
 void til::postfix_writer::do_print_node(til::print_node *const node, int lvl) {
   ASSERT_SAFE_EXPRESSIONS;
-  // node->argument()->accept(this, lvl); // determine the value to print
-  // if (node->argument()->is_typed(cdk::TYPE_INT)) {
-  //   _pf.CALL("printi");
-  //   _pf.TRASH(4); // delete the printed value
-  // } else if (node->argument()->is_typed(cdk::TYPE_STRING)) {
-  //   _pf.CALL("prints");
-  //   _pf.TRASH(4); // delete the printed value's address
-  // } else {
-  //   std::cerr << "ERROR: CANNOT HAPPEN!" << std::endl;
-  //   exit(1);
-  // }
-  // _pf.CALL("println"); // print a newline
+
+  for (auto a : node->arguments()->nodes()) {
+    auto arg = dynamic_cast<cdk::expression_node *>(a);
+    if (!arg) {
+      throw new std::string("print(ln)? argument is not an expression");
+    }
+
+    arg->accept(this, lvl); // determine the value to print
+
+    if (arg->is_typed(cdk::TYPE_INT)) {
+      _pf.CALL("printi");
+      _pf.TRASH(4); // delete the printed value
+    } else if (arg->is_typed(cdk::TYPE_STRING)) {
+      _pf.CALL("prints");
+      _pf.TRASH(4); // delete the printed value's address
+    } else {
+      std::cerr << "ERROR: CANNOT HAPPEN!" << std::endl;
+      exit(1);
+    }
+  }
+
+  if (node->new_line()) {
+    _pf.CALL("println"); // print a newline
+  }
 }
 
 //---------------------------------------------------------------------------
 
 void til::postfix_writer::do_read_node(til::read_node *const node, int lvl) {
   ASSERT_SAFE_EXPRESSIONS;
-  _pf.CALL("readi");
-  _pf.LDFVAL32();
-  node->argument()->accept(this, lvl);
-  _pf.STINT();
+  // TODO:
 }
 
 //---------------------------------------------------------------------------
 
-void til::postfix_writer::do_loop_node(til::loop_node *const node, int lvl) {
+void til::postfix_writer::do_while_node(til::while_node *const node, int lvl) {
   ASSERT_SAFE_EXPRESSIONS;
   int lbl1, lbl2;
   _pf.LABEL(mklbl(lbl1 = ++_lbl));
@@ -286,59 +298,56 @@ void til::postfix_writer::do_if_else_node(til::if_else_node *const node,
   _pf.LABEL(mklbl(lbl1 = lbl2));
 }
 
-//---------------------------------------------------------------------------
-
 void til::postfix_writer::do_address_of_node(til::address_of_node *const node,
                                              int lvl) {
-  // TODO
+  // TODO:
+}
+
+void til::postfix_writer::do_call_node(til::call_node *const node, int lvl) {
+  // TODO:
+}
+
+void til::postfix_writer::do_func_def_node(til::func_def_node *const node,
+                                           int lvl) {
+  // TODO:
 }
 
 void til::postfix_writer::do_block_node(til::block_node *const node, int lvl) {
-  // TODO
+  // TODO:
 }
 
 void til::postfix_writer::do_next_node(til::next_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_null_node(til::null_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_sizeof_node(til::sizeof_node *const node,
-                                         int lvl) {
-  // TODO
+  // TODO:
 }
 
 void til::postfix_writer::do_stop_node(til::stop_node *const node, int lvl) {
-  // TODO
+  // TODO:
+}
+
+void til::postfix_writer::do_index_node(til::index_node *const node, int lvl) {
+  // TODO:
+}
+
+void til::postfix_writer::do_declaration_node(til::declaration_node *const node,
+                                              int lvl) {
+  // TODO:
+}
+
+void til::postfix_writer::do_null_node(til::null_node *const node, int lvl) {
+  // TODO:
+}
+
+void til::postfix_writer::do_objects_node(til::objects_node *const node,
+                                          int lvl) {
+  // TODO:
 }
 
 void til::postfix_writer::do_return_node(til::return_node *const node,
                                          int lvl) {
-  // TODO
+  // TODO:
 }
 
-void til::postfix_writer::do_variable_declaration_node(
-    til::variable_declaration_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_function_call_node(
-    til::function_call_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_function_definition_node(
-    til::function_definition_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_index_node(til::index_node *const node, int lvl) {
-  // TODO
-}
-
-void til::postfix_writer::do_stack_alloc_node(til::stack_alloc_node *const node,
-                                              int lvl) {
-  // TODO
+void til::postfix_writer::do_sizeof_node(til::sizeof_node *const node,
+                                         int lvl) {
+  // TODO:
 }

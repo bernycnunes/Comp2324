@@ -1,16 +1,15 @@
-#pragma once
+#include "cdk/ast/expression_node.h"
+#include "cdk/ast/typed_node.h"
+#include "targets/basic_ast_visitor.h"
 
 namespace til {
 
-/**
- * Class for describing return nodes.
- */
-class return_node : public cdk::basic_node {
+class return_node : public cdk::typed_node {
   cdk::expression_node *_value;
 
 public:
-  return_node(int lineno, cdk::expression_node *value)
-      : cdk::basic_node(lineno), _value(value) {}
+  return_node(int lineno, cdk::expression_node *value = nullptr)
+      : cdk::typed_node(lineno), _value(value) {}
 
   cdk::expression_node *value() { return _value; }
 

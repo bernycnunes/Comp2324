@@ -1,126 +1,73 @@
 %option c++ prefix="til_scanner_" outfile="til_scanner.cpp"
 %option stack noyywrap yylineno 8bit debug
-%{
+%{ 
+// make relevant includes before including the parser's tab file
 #include <string>
-#include <cstring>
-#include <sstream>
-#include <cfloat>
 #include <cdk/ast/sequence_node.h>
 #include <cdk/ast/expression_node.h>
 #include <cdk/ast/lvalue_node.h>
 #include "til_parser.tab.h"
 
-// output stream for building string literals
-static std::ostringstream strlit;
-
-#define DOUBLE_MAX DBL_MAX   // Maximum value for a 8-byte float
-
 // don't change this
 #define yyerror LexerError
 %}
-
-%x X_COMMENT
-%x X_BACKSLASH
 %x X_STRING
-
-DIGIT                            [0-9]
-EXPONENT                         [eE][-+]?{DIGIT}+
-REAL                             {DIGIT}+{EXPONENT}|({DIGIT}+"."{DIGIT}|{DIGIT}"."{DIGIT}+){EXPONENT}?
-
 %%
   yydebug=1; set_debug(1);
 
-;.*                     ;  /* match the whole line (it is ignored) */
-
-"/*"                    yy_push_state(X_COMMENT);
-<X_COMMENT>"*/"         yy_pop_state();
-<X_COMMENT>.|"\n"       ;  /* ignore inside comments */
-
-"var"                   return tTYPE_VAR;
-"int"                   return tTYPE_INT;
-"double"                return tTYPE_DOUBLE;
-"string"                return tTYPE_STRING;
-"void"                  return tTYPE_VOID;
-
-"set"                   return tSET;
-
-"null"                  return tNULL;
-"sizeof"                return tSIZEOF;
-
-"external"              return tEXTERNAL;
-"forward"               return tFORWARD;
-"public"                return tPUBLIC;
-
-"function"              return tFUNCTION;
+(?:;.*|\/\*\s*\*\/)     ; /* ignore comments */
 
 ">="                    return tGE; 
 "<="                    return tLE; 
 "=="                    return tEQ; 
-"!="                    return tNE;
+"!="                    return tNE; 
 "&&"                    return tAND;
 "||"                    return tOR;
-"read"                  return tREAD;
 
-"return"                return tRETURN;
-"print"                 return tPRINT;
-"println"               return tPRINTLN;
+"int"                   return tINT_T;
+"double"                return tDOUBLE_T;
+"string"                return tSTRING_T;
+"void"                  return tVOID_T;
 
-"if"                    return tIF;
-"else"                  return tELSE;
+"external"              return tEXTERNAL;
+"forward"               return tFORWARD;
+"public"                return tPUBLIC;
+"var"                   return tVAR;
 
+"if"                    return tIF; 
 "loop"                  return tLOOP; 
+"print"                 return tPRINT; 
+"println"               return tPRINTLN; 
+"return"                return tRETURN; 
+"block"                 return tBLOCK;
 "stop"                  return tSTOP;
 "next"                  return tNEXT;
 
-"program"               return tPROGRAM;
+"read"                  return tREAD; 
+"null"                  return tNULL;
+"set"                   return tSET;
+"index"                 return tINDEX;
+"objects"               return tOBJECTS;
+"sizeof"                return tSIZEOF;
+"function"              return tFUNCTION;
 
-"block"                 return tBLOCK;
+"program"               return tPROGRAM; 
 
-[A-Za-z][A-Za-z0-9]*    { yylval.s = new std::string(yytext); return tIDENTIFIER; }
+[A-Za-z][A-Za-z0-9_]*   yylval.s = new std::string(yytext); return tIDENTIFIER;
 
-\"                      yy_push_state(X_STRING);
-<X_STRING>\\            yy_push_state(X_BACKSLASH);
-<X_STRING>\"            {
-                          yylval.s = new std::string(strlit.str());
-                          strlit.str("");
-                          strlit.clear();
-                          yy_pop_state();
-                          return tSTRING;
-                        }
-<X_STRING>.             strlit << yytext;                        
+\'                      yy_push_state(X_STRING); yylval.s = new std::string("");
+<X_STRING>\'            yy_pop_state(); return tSTRING;
+<X_STRING>\\\'          *yylval.s += yytext + 1;
+<X_STRING>.             *yylval.s += yytext;
+<X_STRING>\n            yyerror("newline in string");
 
-<X_BACKSLASH>"n"        strlit << '\n'; yy_pop_state();
-<X_BACKSLASH>"r"        strlit << '\r'; yy_pop_state();
-<X_BACKSLASH>"t"        strlit << '\t'; yy_pop_state();
-<X_BACKSLASH>"\""       strlit << '\"'; yy_pop_state();
-<X_BACKSLASH>[[:xdigit:]]+ {
-                          strlit << (char)(unsigned char)strtoul(yytext, NULL, 16);
-                          yy_pop_state();
-                        }
-<X_BACKSLASH>.          strlit << *yytext; yy_pop_state();
+[0-9]+                  yylval.i = strtol(yytext, nullptr, 10); return tINTEGER;
+0x[0-9]+                yylval.i = strtol(yytext, nullptr, 16); return tINTEGER;
+[0-9]+\.[0-9]+          yylval.d = strtod(yytext, nullptr); return tDOUBLE;
 
-0[xX][0-9a-fA-F]+       {
-                          long long int value = strtoul(yytext, NULL, 16);
-                          if (value > INT_MAX) yyerror("Hexadecimal overflow");
-                          yylval.i = value;
-                          return tINTEGER;  // Return tINTEGER instead of tHEX
-                        }
-{REAL}                  {
-                          double value = strtod(yytext, nullptr);
-                          if (value > DOUBLE_MAX) yyerror("Double overflow");
-                          yylval.d = value;
-                          return tDOUBLE;
-                        }
-[0-9]+                  {
-                          long long int value = strtol(yytext, nullptr, 10);
-                          if (value > INT_MAX) yyerror("Integer overflow");
-                          yylval.i = value;
-                          return tINTEGER;
-                        }
+[-()<>=+*/%;{}.?!]      return *yytext;
 
-[-()<>=+*/%~;{}@?.\!]   return *yytext;
-
-[ \t\n\r]+              ; /* ignore whitespace */
+[ \t\n]+                ; /* ignore whitespace */
 
 .                       yyerror("Unknown character");
 
